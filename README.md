@@ -45,7 +45,7 @@ If you keep this directory in sync, e.g., using Dropbox or something else, you c
 
 #### First run:
 
-    docker run --name=devtools -it --cap-add=SYS_ADMIN --device=/dev/dri  -e DISPLAY -v ~/Develops:/netbeans -v /tmp/.X11-unix:/tmp/.X11-unix:rw blys/DevToolboxNB8.2
+    docker run --name=devtools -it --cap-add=SYS_ADMIN --device=/dev/dri  -e DISPLAY -v ~/Develops:/netbeans -v /tmp/.X11-unix:/tmp/.X11-unix:rw blys/devtoolboxnb8.2
 
 After a while, NetBeans will appear.
 #### Stop your toolbox:
