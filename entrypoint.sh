@@ -1,4 +1,9 @@
 #!/bin/bash
+if [ -z "$USEREMAIL" ]; then
+    echo "Missing user email. Please provide it in USEREMAIL envirnment variable"
+    exit 1
+fi
+
 #Check if the user configuration has been provided
 if [ -n "$USERCFG" ]; then
     #extracts user information
@@ -28,7 +33,12 @@ if [ -n "$USERCFG" ]; then
                 usermod -d $NBUSRHOME -l ${userinfo[0]} -g ${userinfo[3]} -c "${userinfo[4]}" ${olduserinfo[0]}
             fi
 
-            #Start the envinronment using the unprivileged user
+            #Init git user identity
+            su - ${userinfo[0]} -c "git config --global user.name '${personinfo[0]}'"
+            su - ${userinfo[0]} -c "git config --global user.email $USEREMAIL"
+
+            #Start the environment using the unprivileged user
+
             if [ -n "`echo "$@" | sed -e 's/^[ \t\n]*//'`" ]; then
                 su - ${userinfo[0]} -c "$@"
                 exit $?
