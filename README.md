@@ -1,21 +1,22 @@
-# Portable and consistent Dev Toolbox based on NetBeans
+# Portable and consistent Dev Toolbox based on NetBeans v1.1.0
 https://hub.docker.com/r/blys/devtoolboxnb8.2/
 
 A specific variety of tools are the trusted companions of a software developer.
 
-Gather together a set of tools, which will become your favorite set of tools (at least for a while), costs time, and it can not be done effortlessly.
-You want them ready to go in any circumstance, and this is the reason a laptop becomes like the toolbox a plumber always have with him, or her. You personalize it with stickers outside and all the care you can give it inside.
-But life is unfair. One day your beloved friend will leave you and what will be there will be called tragedy and pain.
-Luckily we learned that machines are soulless and do not deserve our love and loyalty. When you lost one, you must have been ready to start another in no time.
-Moreover, if you want to be with one or another, you don't have to be concerned about its feelings, and mostly, you want to find exactly the tools you are used to, precisely in the same order you left them the last time.
+To gather together a set of tools, which will become your favorite set of tools (at least for a while), costs time, and it can't be done effortlessly.
+You want them ready to go in any circumstance, and this is the reason a laptop becomes like the toolbox a plumber always have with him, or her.
+You love it, you personalize it with stickers reflecting all the care you gave it making it unique.
+But life is unfair. One day your beloved friend will leave you and there will be just tragedy and suffering.
+Luckily we learned that machines are soulless and do not deserve our love or loyalty. When you lost one, you must be ready to start another in no time.
+Moreover, if you want to be with one or another, you don't have to be concerned about their feelings, and mostly, you want to find exactly the tools you are used to, precisely in the same order you left them the last time, even if it was on a different machine.
 So, why do not you put all your favorite tools in a container you always feel free to delete without the fear of losing a friend?
 
-This is the idea: separate your tools from settings, separate development environment settings from your standard user configurations, make the whole toolbox replaceable in no time, keep your settings in sync with a cloud service and you'll live your life with that smile on your mouth that just the thoughtless can have.
+This is the idea: separate your tools from settings, separate development environment settings from your standard user configurations, make the whole toolbox is replaceable in no time, keep your settings in sync with a cloud service and you'll live your life with a thoughtless smile on your mouth.
 
 **This is what it is:** *a Dockerfile to build your (mine) complete toolbox and have it always ready to go as you want.*
 
 ## The content of the box:
-Because I'm a PHP developer, but not just that, and think Oracle NetBeans is excellent even if not perfect, this one is the primary tool in the box.
+Because I'm a PHP developer, but not just that, and think Oracle NetBeans is excellent IDE even if not perfect, this one is the primary tool in the box.
 
 Hera a complete list of the content of the box:
 
@@ -35,19 +36,22 @@ Hera a complete list of the content of the box:
 - [Google Chrome 64](https://www.google.com/chrome/)
 
 ## How does it work
-Mount the directory where you keep your development projects as container volume. It will become the home directory of an unprivileged user where its UID and GID are 1000.
-If you keep this directory in sync, e.g., using Dropbox or something else, you can quickly change from a machine to another just always running the same command.
+Mount the directory where you keep your development projects as container volume. Pass your system's user info (as provided by passwd file) and be sure that user is the one who can access your projects' directory.
+The projects' direcotry, inside the new created container, will become the home directory of an unprivileged user whit equal username, UID and group and full name of your actual system's user.
+If you keep this directory in sync, e.g., using Dropbox or something else (allowing the sync of hidden files and directories), you can quickly move from a machine to another just running the same command.
 
  - Let's say `~/Develops` is where you keep your dev projects.
+ - Pass your user's info by the envinronment variable USERCFG:  ``-e "USERCFG=`getent passwd $USER`"``
  - You can name the new container `devtools` to speed up future calls.
  - To run graphical UI you need to pass `$DISPLAY` envinronment variable, and mount `/tmp/.X11-unix`.
- - If you want Google Chrome running you need `--cap-add=SYS_ADMIN` and `--device=/dev/dri`
+ - If you want Google Chrome to run, you need `--cap-add=SYS_ADMIN` and `--device=/dev/dri`
 
 #### First run:
+```bash
+docker run --name=devtools -it -e "USERCFG=`getent passwd $USER`" --cap-add=SYS_ADMIN --device=/dev/dri  -e DISPLAY -v ~/Develops:/netbeans -v /tmp/.X11-unix:/tmp/.X11-unix:rw blys/devtoolboxnb8.2
+```
 
-    docker run --name=devtools -it --cap-add=SYS_ADMIN --device=/dev/dri  -e DISPLAY -v ~/Develops:/netbeans -v /tmp/.X11-unix:/tmp/.X11-unix:rw blys/devtoolboxnb8.2
-
-After a while, NetBeans will appear.
+After a short while, NetBeans will appear.
 #### Stop your toolbox:
     docker stop devtools
 #### Start your toolbox:

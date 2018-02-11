@@ -4,14 +4,12 @@ LABEL Description="Dockerized of NetBeans 8.2 bundle and useful dev tools" Versi
 
 #User definitions
 ENV NBUSRHOME /netbeans
-ENV NBUSR nbuser
-
-#adds a user to run the environment
-RUN addgroup --gid 1000 $NBUSR \
-    && adduser --home $NBUSRHOME --uid 1000 --disabled-password --ingroup $NBUSR $NBUSR \
-    && chown -R $NBUSR:$NBUSR $NBUSRHOME
 
 WORKDIR /tmp
+
+#Set the entrypoint script
+COPY entrypoint.sh /usr/bin/entrypoint.sh
+RUN chmod +x /usr/bin/entrypoint.sh
 
 #Gets last stabel NetBeans
 ADD http://download.netbeans.org/netbeans/8.2/final/bundles/netbeans-8.2-linux.sh /tmp
@@ -90,10 +88,8 @@ RUN pecl install xdebug \
 RUN apt-get clean cache \
     && rm -r /tmp/*
 
-#run as unprivileged user
-USER $NBUSR
-WORKDIR $NBUSRHOME
-
+#set the home mount point user
 VOLUME $NBUSRHOME
 
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
 CMD ["netbeans"]
