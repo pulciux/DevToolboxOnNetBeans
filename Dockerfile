@@ -1,6 +1,6 @@
 FROM openjdk:8
 MAINTAINER Gianluigi Belli <gianluigi.belli@blys.it>
-LABEL Description="Dockerized of NetBeans 8.2 bundle and useful dev tools" Version="1.0.0"
+LABEL Description="Dockerized of NetBeans 8.2 bundle and useful dev tools" Version="1.1.1"
 
 #User definitions
 ENV NBUSRHOME /netbeans
