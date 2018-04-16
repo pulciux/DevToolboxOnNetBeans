@@ -79,7 +79,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 
 #Install last stable Chrome browser
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    && dpkg -i google-chrome-stable_current_amd64.deb
+    && (dpkg -i google-chrome-stable_current_amd64.deb || (apt-get -y -f install && dpkg -i google-chrome-stable_current_amd64.deb))
 
 #Install last stable PHPUnit
 RUN wget https://phar.phpunit.de/phpunit-7.0.phar \
