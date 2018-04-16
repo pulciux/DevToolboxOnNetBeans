@@ -1,6 +1,25 @@
-FROM openjdk:8
+FROM ubuntu:bionic
 MAINTAINER Gianluigi Belli <gianluigi.belli@blys.it>
-LABEL Description="Dockerized of NetBeans 8.2 bundle and useful dev tools" Version="1.1.1"
+LABEL Description="Dockerized of NetBeans 8.2 bundle and useful dev tools" Version="1.2.2"
+
+ENV TZ Europe/Rome
+
+RUN echo $TZ > /etc/timezone && \
+    apt-get update && apt-get install -y tzdata software-properties-common && \
+    rm /etc/localtime && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata && \
+    apt-get clean
+
+RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+  add-apt-repository -y ppa:webupd8team/java && \
+  apt-get update && \
+  apt-get install -y oracle-java8-installer && \
+  rm -rf /var/lib/apt/lists/* && \
+  rm -rf /var/cache/oracle-jdk8-installer
+
+# Define commonly used JAVA_HOME variable
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
 #User definitions
 ENV NBUSRHOME /netbeans
@@ -27,11 +46,6 @@ RUN apt-get update \
         lsb-release \
         ca-certificates \
         curl \
-    && wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg \
-    && sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list' \
-    && curl -sL https://deb.nodesource.com/setup_6.x | bash - \
-    && apt-get update \
-    && apt-get install -y \
         php7.2 \
         php7.2-common \
         php7.2-cli \
@@ -43,7 +57,7 @@ RUN apt-get update \
         libcurl4-openssl-dev \
         git \
         unzip \
-        nodejs \
+        openssl \
         ruby-full \
         rubygems \
         ruby-sass \
@@ -53,19 +67,14 @@ RUN apt-get update \
         xdg-utils \
         fonts-liberation \
         libcanberra-gtk-module \
-        libcanberra-gtk3-module
-
-#Install last Firefox
-RUN  sh -c 'echo "deb http://ftp.hr.debian.org/debian sid main contrib non-free" > /etc/apt/sources.list' \
-    && apt-get update \
-    && apt install -y -t sid firefox
+        libcanberra-gtk3-module \
+        firefox \
+        libnspr4 \
+        libnss3
 
 #Install last PHP composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer
-
-#Install last nodejs npm
-RUN npm install npm --global
 
 #Install last stable Chrome browser
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
@@ -83,6 +92,15 @@ RUN wget https://phar.phpunit.de/phpunit-7.0.phar \
 RUN pecl install xdebug \
     && sh -c 'echo "zend_extension=xdebug.so" > /etc/php/7.2/mods-available/xdebug.ini' \
     && ln -s /etc/php/7.2/mods-available/xdebug.ini /etc/php/7.2/cli/conf.d/20-xdebug.ini
+
+#Install nodejs
+RUN apt install nodejs npm -y
+
+#Install sassy-buttons
+RUN gem install sassy-buttons
+
+#Install uglify
+RUN npm install uglify-js -g
 
 #Tyde Up
 RUN apt-get clean cache \

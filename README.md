@@ -32,6 +32,7 @@ Here a complete list of the content of the box:
 	 - [PHPUnit 7.0](https://phpunit.de/)
 - [Node JS 6.12](https://nodejs.org/en/)
 	- [npm](https://www.npmjs.com/)
+        - [UglifyJS2](https://github.com/mishoo/UglifyJS2)
 - [Ruby 2.3](https://www.ruby-lang.org/)
 	- [CSS Sass 3.4](https://sass-lang.com/)
 	- [CSS Compass 1.0.3](compass-style.org)
@@ -55,7 +56,7 @@ If you keep your directory in sync, e.g., using Dropbox or something else (allow
 
 #### First run:
 ```bash
-docker run --name=devtools -it -e "USERCFG=`getent passwd $USER`" -e "USEREMAIL=my.email@example.org" --cap-add=SYS_ADMIN --device=/dev/dri  -e DISPLAY -v ~/Develops:/netbeans -v /tmp/.X11-unix:/tmp/.X11-unix:rw blys/devtoolboxnb8.2
+docker run --name=mytbox -it --memory=2g --memory-swap=2g --oom-kill-disable -e "USEREMAIL=my.email@example.org" -e "USERCFG=`getent passwd $USER`" --cap-add=SYS_ADMIN --device=/dev/dri  -e DISPLAY -v ~/Develops:/netbeans -v /tmp/.X11-unix:/tmp/.X11-unix:rw blys/devtoolboxnb8.2
 ```
 
 After a short while, NetBeans will appear.
