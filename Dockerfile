@@ -68,6 +68,7 @@ RUN apt-get update \
         fonts-liberation \
         libcanberra-gtk-module \
         libcanberra-gtk3-module \
+        flamerobin \
         firefox \
         libnspr4 \
         libnss3

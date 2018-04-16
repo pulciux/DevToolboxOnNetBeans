@@ -1,7 +1,7 @@
 
 # Portable and consistent Dev Toolbox based on NetBeans
 
-##### v1.1.1
+##### v1.2.2
 
 https://hub.docker.com/r/blys/devtoolboxnb8.2/
 
@@ -39,6 +39,8 @@ Here a complete list of the content of the box:
 - [GIT 2,11](https://git-scm.com/)
 - [Mozilla Firefox 58](https://www.mozilla.org/en-US/firefox/)
 - [Google Chrome 64](https://www.google.com/chrome/)
+- [Flamerobin](http://www.flamerobin.org/)
+
 
 ## How does it work
 Mount the directory where you keep your development projects as container volume. Pass your system's user info (as provided by passwd file) and be sure that user is the one who can access your projects' directory.
