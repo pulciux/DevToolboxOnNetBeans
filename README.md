@@ -58,7 +58,7 @@ If you keep your directory in sync, e.g., using Dropbox or something else (allow
 
 #### First run:
 ```bash
-docker run --name=mytbox -it --memory=2g --memory-swap=2g --oom-kill-disable -e "USEREMAIL=my.email@example.org" -e "USERCFG=`getent passwd $USER`" --cap-add=SYS_ADMIN --device=/dev/dri  -e DISPLAY -v ~/Develops:/netbeans -v /tmp/.X11-unix:/tmp/.X11-unix:rw blys/devtoolboxnb8.2
+docker run --name=mytbox -it --net=host --memory=2g --oom-kill-disable -e "USEREMAIL=my.email@example.org" -e "USERCFG=`getent passwd $USER`" --cap-add=SYS_ADMIN --device=/dev/dri  -e DISPLAY -v $HOME:/netbeans blys/devtoolboxnb8.2:1.2.2
 ```
 
 After a short while, NetBeans will appear.
