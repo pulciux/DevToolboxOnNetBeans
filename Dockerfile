@@ -1,25 +1,77 @@
 FROM ubuntu:bionic
 MAINTAINER Gianluigi Belli <gianluigi.belli@blys.it>
-LABEL Description="Dockerized of NetBeans 8.2 bundle and useful dev tools" Version="1.2.2"
+LABEL Description="Dockerized bundle and useful dev tools" Version="2.0.1"
 
 ENV TZ Europe/Rome
 
 RUN echo $TZ > /etc/timezone && \
-    apt-get update && apt-get install -y tzdata software-properties-common && \
-    rm /etc/localtime && \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    dpkg-reconfigure -f noninteractive tzdata && \
-    apt-get clean
+    apt-get update \
+    && apt-get install -y \
+      tzdata \
+      software-properties-common \
+      apt-transport-https \
+      wget \
+      curl \
+    && rm /etc/localtime \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && dpkg-reconfigure -f noninteractive tzdata \
+    && wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add - \
+    && add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" \
+    && add-apt-repository ppa:webupd8team/atom \
+    && apt-add-repository ppa:ansible/ansible \
+    && curl -sL https://deb.nodesource.com/setup_11.x | bash - \
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
+    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+    && curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - \
+    && apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main" \
+    && apt-get update \
+    && apt-get install -y \
+        kubectl \
+        python3 \
+        python3-pip \
+        docker-ce \
+        nodejs \
+        build-essential \
+        atom \
+        code \
+        ansible \
+        openjdk-8-jdk \
+        openjdk-8-jre \
+        lsb-release \
+        ca-certificates \        
+        php7.2 \
+        php7.2-common \
+        php7.2-cli \
+        php7.2-dom \
+        php7.2-mbstring \
+        php7.2-soap \
+        php-pear \
+        php7.2-dev \
+        libcurl4-openssl-dev \
+        git \
+        unzip \
+        openssl \
+        ruby-full \
+        rubygems \
+        ruby-sass \
+        ruby-compass \
+        libappindicator3-1 \
+        libgconf-2-4 \
+        xdg-utils \
+        fonts-liberation \
+        libcanberra-gtk-module \
+        libcanberra-gtk3-module \
+        flamerobin \
+        firefox \
+        libnspr4 \
+        libnss3
 
-RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-  add-apt-repository -y ppa:webupd8team/java && \
-  apt-get update && \
-  apt-get install -y oracle-java8-installer && \
-  rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk8-installer
+# Install uglify-js
+RUN npm install uglify-js -g
 
 # Define commonly used JAVA_HOME variable
-ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+RUN export JAVA_HOME
 
 #User definitions
 ENV NBUSRHOME /netbeans
@@ -37,41 +89,8 @@ ADD http://download.netbeans.org/netbeans/8.2/final/bundles/netbeans-8.2-linux.s
 RUN chmod +x netbeans-8.2-linux.sh \
     && sleep 5 \
     && ./netbeans-8.2-linux.sh --silent \
-    && ln -s /usr/local/netbeans-8.2/bin/netbeans /usr/local/bin/netbeans
-
-#Install PHP, nodejs, sass, compass, git and dependencies
-RUN apt-get update \
-    && apt install -y \
-        apt-transport-https \
-        lsb-release \
-        ca-certificates \
-        curl \
-        php7.2 \
-        php7.2-common \
-        php7.2-cli \
-        php7.2-dom \
-        php7.2-mbstring \
-        php7.2-soap \
-        php-pear \
-        php7.2-dev \
-        libcurl4-openssl-dev \
-        git \
-        unzip \
-        openssl \
-        ruby-full \
-        rubygems \
-        ruby-sass \
-        ruby-compass \
-        libappindicator1 \
-        libgconf-2-4 \
-        xdg-utils \
-        fonts-liberation \
-        libcanberra-gtk-module \
-        libcanberra-gtk3-module \
-        flamerobin \
-        firefox \
-        libnspr4 \
-        libnss3
+    && ln -s /usr/local/netbeans-8.2/bin/netbeans /usr/local/bin/netbeans \
+    && rm -f ./netbeans-8.2-linux.sh
 
 #Install last PHP composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
@@ -82,33 +101,27 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
     && (dpkg -i google-chrome-stable_current_amd64.deb || (apt-get -y -f install && dpkg -i google-chrome-stable_current_amd64.deb))
 
 #Install last stable PHPUnit
-RUN wget https://phar.phpunit.de/phpunit-7.0.phar \
-    && chmod +x phpunit-7.0.phar \
-    && mv phpunit-7.0.phar /usr/local/bin/phpunit \
+RUN wget https://phar.phpunit.de/phpunit-8.phar \
+    && chmod +x phpunit-*.phar \
+    && mv phpunit-*.phar /usr/local/bin/phpunit \
     && wget https://phar.phpunit.de/phpunit-skelgen.phar \
-    && chmod +x phpunit-skelgen.phar \
-    && mv phpunit-skelgen.phar /usr/local/bin/phpunit-skelgen
+    && chmod +x phpunit-skelgen*.phar \
+    && mv phpunit-skelgen*.phar /usr/local/bin/phpunit-skelgen
 
 #Install xdebug
 RUN pecl install xdebug \
     && sh -c 'echo "zend_extension=xdebug.so" > /etc/php/7.2/mods-available/xdebug.ini' \
     && ln -s /etc/php/7.2/mods-available/xdebug.ini /etc/php/7.2/cli/conf.d/20-xdebug.ini
 
-#Install nodejs
-RUN apt install nodejs npm -y
-
 #Install sassy-buttons
 RUN gem install sassy-buttons
 
-#Install uglify
-RUN npm install uglify-js -g
-
 #Tyde Up
-RUN apt-get clean cache \
-    && rm -r /tmp/*
+RUN rm -r /tmp/* \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 #set the home mount point user
 VOLUME $NBUSRHOME
 
 ENTRYPOINT ["/usr/bin/entrypoint.sh"]
-CMD ["netbeans"]

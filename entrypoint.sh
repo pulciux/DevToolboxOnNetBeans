@@ -26,12 +26,13 @@ if [ -n "$USERCFG" ]; then
             if [ -z "`getent passwd ${userinfo[2]}`" ]; then
                 #create the missing user
                 adduser --home $NBUSRHOME --uid ${userinfo[2]} --disabled-password --gecos "${userinfo[4]}" --ingroup ${groupinfo[0]} ${userinfo[0]}
+                usermod -G docker ${userinfo[0]}
             else
                 #extract existing user info
                 IFS=':' read -r -a olduserinfo <<< `getent passwd ${userinfo[2]}`
                 #update user configurations
-                usermod -d $NBUSRHOME -l ${userinfo[0]} -g ${userinfo[3]} -c "${userinfo[4]}" ${olduserinfo[0]}
-            fi
+                usermod -d $NBUSRHOME -l ${userinfo[0]} -g ${userinfo[3]} -G docker -c "${userinfo[4]}" ${olduserinfo[0]}
+            fi            
 
             #Init git user identity
             su - ${userinfo[0]} -c "git config --global user.name '${personinfo[0]}'"
