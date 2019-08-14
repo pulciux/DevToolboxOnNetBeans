@@ -1,6 +1,5 @@
 FROM ubuntu:bionic
-MAINTAINER Gianluigi Belli <gianluigi.belli@blys.it>
-LABEL Description="Dockerized bundle and useful dev tools" Version="2.0.1"
+LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.0.3"
 
 ENV TZ Europe/Rome
 
@@ -12,6 +11,7 @@ RUN echo $TZ > /etc/timezone && \
       apt-transport-https \
       wget \
       curl \
+      bash-completion \
     && rm /etc/localtime \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && dpkg-reconfigure -f noninteractive tzdata \
@@ -27,8 +27,8 @@ RUN echo $TZ > /etc/timezone && \
     && apt-get update \
     && apt-get install -y \
         kubectl \
-        python3 \
-        python3-pip \
+        python \
+        python-pip \
         docker-ce \
         nodejs \
         build-essential \
@@ -38,7 +38,7 @@ RUN echo $TZ > /etc/timezone && \
         openjdk-8-jdk \
         openjdk-8-jre \
         lsb-release \
-        ca-certificates \        
+        ca-certificates \
         php7.2 \
         php7.2-common \
         php7.2-cli \
@@ -112,6 +112,10 @@ RUN wget https://phar.phpunit.de/phpunit-8.phar \
 RUN pecl install xdebug \
     && sh -c 'echo "zend_extension=xdebug.so" > /etc/php/7.2/mods-available/xdebug.ini' \
     && ln -s /etc/php/7.2/mods-available/xdebug.ini /etc/php/7.2/cli/conf.d/20-xdebug.ini
+
+#Install python packages
+RUN pip install \
+      docker
 
 #Install sassy-buttons
 RUN gem install sassy-buttons
