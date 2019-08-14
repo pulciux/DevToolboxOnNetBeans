@@ -1,5 +1,5 @@
 FROM ubuntu:bionic
-LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.0.3"
+LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.0.4"
 
 ENV TZ Europe/Rome
 
@@ -26,6 +26,7 @@ RUN echo $TZ > /etc/timezone && \
     && apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main" \
     && apt-get update \
     && apt-get install -y \
+        vim \
         kubectl \
         python \
         python-pip \
