@@ -1,5 +1,5 @@
 FROM ubuntu:bionic
-LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.0.4"
+LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.1.0"
 
 ENV TZ Europe/Rome
 
@@ -16,7 +16,7 @@ RUN echo $TZ > /etc/timezone && \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && dpkg-reconfigure -f noninteractive tzdata \
     && wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add - \
-    && add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" \
+    && add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" \    
     && add-apt-repository ppa:webupd8team/atom \
     && apt-add-repository ppa:ansible/ansible \
     && curl -sL https://deb.nodesource.com/setup_11.x | bash - \
@@ -24,9 +24,12 @@ RUN echo $TZ > /etc/timezone && \
     && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
     && curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - \
     && apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main" \
+    && curl -s https://insomnia.rest/keys/debian-public.key.asc | apt-key add - \    
+    && add-apt-repository "deb https://dl.bintray.com/getinsomnia/Insomnia /" \
     && apt-get update \
     && apt-get install -y \
         vim \
+        insomnia \
         kubectl \
         python \
         python-pip \
@@ -84,14 +87,14 @@ COPY entrypoint.sh /usr/bin/entrypoint.sh
 RUN chmod +x /usr/bin/entrypoint.sh
 
 #Gets last stabel NetBeans
-ADD http://download.netbeans.org/netbeans/8.2/final/bundles/netbeans-8.2-linux.sh /tmp
+#ADD http://download.netbeans.org/netbeans/8.2/final/bundles/netbeans-8.2-linux.sh /tmp
 
 #Install NetBeans
-RUN chmod +x netbeans-8.2-linux.sh \
-    && sleep 5 \
-    && ./netbeans-8.2-linux.sh --silent \
-    && ln -s /usr/local/netbeans-8.2/bin/netbeans /usr/local/bin/netbeans \
-    && rm -f ./netbeans-8.2-linux.sh
+# RUN chmod +x netbeans-8.2-linux.sh \
+#     && sleep 5 \
+#     && ./netbeans-8.2-linux.sh --silent \
+#     && ln -s /usr/local/netbeans-8.2/bin/netbeans /usr/local/bin/netbeans \
+#     && rm -f ./netbeans-8.2-linux.sh
 
 #Install last PHP composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
@@ -121,6 +124,22 @@ RUN pip install \
 #Install sassy-buttons
 RUN gem install sassy-buttons
 
+# Makes bash auto-completion work and history researchable
+RUN sed -i -E 's/^#\s*("\\e\[5~": history-search-backward)$/\1/g' /etc/inputrc \
+    && sed -i -E 's/^#\s*("\\e\[6~": history-search-forward)$/\1/g' /etc/inputrc \
+    && echo "source /etc/profile.d/bash_completion.sh" >> /etc/bash.bashrc \
+    && echo "source <(kubectl completion bash)" >> /etc/bash.bashrc
+
+#Intall python packages
+RUN pip install \
+      jsondiff
+
+#Intall docker-compose
+RUN curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
+    && chmod +x /usr/local/bin/docker-compose \
+    && ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose \
+    && curl -L https://raw.githubusercontent.com/docker/compose/1.24.1/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
+     
 #Tyde Up
 RUN rm -r /tmp/* \
     && apt-get clean \
