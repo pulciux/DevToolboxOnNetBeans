@@ -1,5 +1,5 @@
 FROM ubuntu:bionic
-LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.1.0"
+LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.1.1"
 
 ENV TZ Europe/Rome
 
@@ -33,6 +33,7 @@ RUN echo $TZ > /etc/timezone && \
         kubectl \
         python \
         python-pip \
+        ssh-askpass \
         docker-ce \
         nodejs \
         build-essential \
