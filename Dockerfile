@@ -1,5 +1,5 @@
 FROM ubuntu:bionic
-LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.1.1"
+LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.1.3"
 
 ENV TZ Europe/Rome
 
@@ -16,7 +16,7 @@ RUN echo $TZ > /etc/timezone && \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && dpkg-reconfigure -f noninteractive tzdata \
     && wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add - \
-    && add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" \    
+    && add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" \
     && add-apt-repository ppa:webupd8team/atom \
     && apt-add-repository ppa:ansible/ansible \
     && curl -sL https://deb.nodesource.com/setup_11.x | bash - \
@@ -24,7 +24,7 @@ RUN echo $TZ > /etc/timezone && \
     && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
     && curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - \
     && apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main" \
-    && curl -s https://insomnia.rest/keys/debian-public.key.asc | apt-key add - \    
+    && curl -s https://insomnia.rest/keys/debian-public.key.asc | apt-key add - \
     && add-apt-repository "deb https://dl.bintray.com/getinsomnia/Insomnia /" \
     && apt-get update \
     && apt-get install -y \
@@ -118,10 +118,6 @@ RUN pecl install xdebug \
     && sh -c 'echo "zend_extension=xdebug.so" > /etc/php/7.2/mods-available/xdebug.ini' \
     && ln -s /etc/php/7.2/mods-available/xdebug.ini /etc/php/7.2/cli/conf.d/20-xdebug.ini
 
-#Install python packages
-RUN pip install \
-      docker
-
 #Install sassy-buttons
 RUN gem install sassy-buttons
 
@@ -133,14 +129,24 @@ RUN sed -i -E 's/^#\s*("\\e\[5~": history-search-backward)$/\1/g' /etc/inputrc \
 
 #Intall python packages
 RUN pip install \
-      jsondiff
+      docker \
+      jsondiff \
+      netaddr \
+      kubernetes \
+      openshift \
+      packaging \
+      msrestazure \
+      ansible[azure]
 
 #Intall docker-compose
 RUN curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
     && chmod +x /usr/local/bin/docker-compose \
     && ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose \
     && curl -L https://raw.githubusercontent.com/docker/compose/1.24.1/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
-     
+
+#Install Azure CLI
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
 #Tyde Up
 RUN rm -r /tmp/* \
     && apt-get clean \
