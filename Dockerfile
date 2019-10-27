@@ -26,6 +26,8 @@ RUN echo $TZ > /etc/timezone && \
     && apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main" \
     && curl -s https://insomnia.rest/keys/debian-public.key.asc | apt-key add - \
     && add-apt-repository "deb https://dl.bintray.com/getinsomnia/Insomnia /" \
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
     && apt-get update \
     && apt-get install -y \
     vim \
@@ -74,8 +76,8 @@ RUN echo $TZ > /etc/timezone && \
     libnspr4 \
     libnss3
 
-# Install uglify-js
-RUN npm install uglify-js -g
+# Install npm modules
+RUN npm install -g uglify-js gulp 
 
 # Define commonly used JAVA_HOME variable
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
