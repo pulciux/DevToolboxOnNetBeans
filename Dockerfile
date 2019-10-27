@@ -1,17 +1,17 @@
 FROM ubuntu:bionic
-LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.1.3"
+LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.1.4"
 
 ENV TZ Europe/Rome
 
 RUN echo $TZ > /etc/timezone && \
     apt-get update \
     && apt-get install -y \
-      tzdata \
-      software-properties-common \
-      apt-transport-https \
-      wget \
-      curl \
-      bash-completion \
+    tzdata \
+    software-properties-common \
+    apt-transport-https \
+    wget \
+    curl \
+    bash-completion \
     && rm /etc/localtime \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && dpkg-reconfigure -f noninteractive tzdata \
@@ -28,48 +28,51 @@ RUN echo $TZ > /etc/timezone && \
     && add-apt-repository "deb https://dl.bintray.com/getinsomnia/Insomnia /" \
     && apt-get update \
     && apt-get install -y \
-        vim \
-        insomnia \
-        kubectl \
-        python \
-        python-pip \
-        ssh-askpass \
-        docker-ce \
-        nodejs \
-        build-essential \
-        atom \
-        code \
-        ansible \
-        openjdk-8-jdk \
-        openjdk-8-jre \
-        lsb-release \
-        ca-certificates \
-        php7.2 \
-        php7.2-common \
-        php7.2-cli \
-        php7.2-dom \
-        php7.2-mbstring \
-        php7.2-soap \
-        php-pear \
-        php7.2-dev \
-        libcurl4-openssl-dev \
-        git \
-        unzip \
-        openssl \
-        ruby-full \
-        rubygems \
-        ruby-sass \
-        ruby-compass \
-        libappindicator3-1 \
-        libgconf-2-4 \
-        xdg-utils \
-        fonts-liberation \
-        libcanberra-gtk-module \
-        libcanberra-gtk3-module \
-        flamerobin \
-        firefox \
-        libnspr4 \
-        libnss3
+    vim \
+    insomnia \
+    kubectl \
+    python \
+    python-pip \
+    ssh-askpass \
+    docker-ce \
+    nodejs \
+    build-essential \
+    atom \
+    code \
+    ansible \
+    openjdk-8-jdk \
+    openjdk-8-jre \
+    lsb-release \
+    ca-certificates \
+    php7.2 \
+    php7.2-common \
+    php7.2-cli \
+    php7.2-dom \
+    php7.2-mbstring \
+    php7.2-soap \
+    php7.2-curl \
+    php7.2-gd \
+    php7.2-zip \
+    php-pear \
+    php7.2-dev \
+    libcurl4-openssl-dev \
+    git \
+    unzip \
+    openssl \
+    ruby-full \
+    rubygems \
+    ruby-sass \
+    ruby-compass \
+    libappindicator3-1 \
+    libgconf-2-4 \
+    xdg-utils \
+    fonts-liberation \
+    libcanberra-gtk-module \
+    libcanberra-gtk3-module \
+    flamerobin \
+    firefox \
+    libnspr4 \
+    libnss3
 
 # Install uglify-js
 RUN npm install uglify-js -g
@@ -129,14 +132,14 @@ RUN sed -i -E 's/^#\s*("\\e\[5~": history-search-backward)$/\1/g' /etc/inputrc \
 
 #Intall python packages
 RUN pip install \
-      docker \
-      jsondiff \
-      netaddr \
-      kubernetes \
-      openshift \
-      packaging \
-      msrestazure \
-      ansible[azure]
+    docker \
+    jsondiff \
+    netaddr \
+    kubernetes \
+    openshift \
+    packaging \
+    msrestazure \
+    ansible[azure]
 
 #Intall docker-compose
 RUN curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
