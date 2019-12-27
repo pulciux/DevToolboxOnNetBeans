@@ -1,5 +1,5 @@
 FROM ubuntu:bionic
-LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.1.5"
+LABEL Manintainer="Gianluigi Belli <gianluigi.belli@blys.it>" Description="Dockerized bundle and useful dev tools" Version="2.1.6"
 
 ENV TZ Europe/Rome
 
@@ -39,6 +39,7 @@ RUN echo $TZ > /etc/timezone && \
     docker-ce \
     nodejs \
     yarn \
+    rsync \
     build-essential \
     atom \
     code \
